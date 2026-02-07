@@ -1,5 +1,3 @@
-from Typer_v2.input import STENO_TRIGGER
-
 # Typer_v2 — Adaptive Steno Typing Engine
 
 Typer_v2 is a lightweight, real-time **stenography-style typing engine** for Python that expands short, unordered letter chords into full words — and **learns from your usage over time**.
