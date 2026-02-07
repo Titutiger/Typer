@@ -8,7 +8,7 @@ import Typer_v2.input
 
 def main():
     print("Steno-style word cycler active.")
-    print("Type letters (≤4), press → to cycle.")
+    print("Are you sure you want to quit?")
     print("Press ESC to quit.\n")
 
     keyboard.wait("esc")
