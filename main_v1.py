@@ -4,10 +4,10 @@ This is a python script to output a word by pressing all of it's letters at the 
 
 """
 
-# main.py
-from Typer.input import StenoInput
-from Typer.mapping import get_word_forms_from_chord
-from Typer.output import StenoOutput
+# main_v1.py
+from Typer_v1.input import StenoInput
+from Typer_v1.mapping import get_word_forms_from_chord
+from Typer_v1.output import StenoOutput
 
 current_word_forms = []
 current_form_index = 0
