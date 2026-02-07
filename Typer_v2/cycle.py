@@ -1,4 +1,5 @@
 # cycle.py
+from Typer_v2.frequency import FREQ
 
 class CycleState:
     def __init__(self):
@@ -7,7 +8,12 @@ class CycleState:
         self.active = False
 
     def reset(self, matches):
-        self.matches = matches
+        # sort by frequency (descending)
+        self.matches = sorted(
+            matches,
+            key=lambda w: FREQ.get(w),
+            reverse=True
+        )
         self.index = 0
         self.active = True
 
