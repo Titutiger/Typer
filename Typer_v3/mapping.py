@@ -1,5 +1,6 @@
 # mapping.py
 from pathlib import Path
+from Typer_v3.frequency import FREQ
 
 DROP_VOWELS = False
 VOWELS = set("a") # aeiou
@@ -9,6 +10,11 @@ def normalize(text: str) -> str:
     text = "".join(c for c in text if c not in VOWELS)  # optional
     return "".join(sorted(set(text)))
 
+def add_word(word: str):
+    sig = normalize(word)
+    if word not in WORD_MAP[sig]:
+        WORD_MAP[sig].append(word)
+        WORD_MAP[sig].sort(key=lambda w: FREQ.get(w), reverse=True)
 
 def load_wordlist():
     # project_root/data/words.txt

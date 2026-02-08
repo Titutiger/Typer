@@ -2,7 +2,7 @@
 import keyboard
 import threading
 
-from Typer_v3.mapping import WORD_MAP, normalize
+from Typer_v3.mapping import WORD_MAP, normalize, add_word
 from Typer_v3.cycle import CycleState
 from Typer_v3.frequency import FREQ
 
@@ -154,7 +154,11 @@ def on_key(event):
 
     # -------- Commit --------
     if key in ("space", "enter"):
-        reset_state(commit=True)
+        if expanded_word:
+            FREQ.inc(expanded_word)
+            from Typer_v2.mapping import add_word
+            add_word(expanded_word)
+        reset_state()
         return
 
     # -------- Edit --------
