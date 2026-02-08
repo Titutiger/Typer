@@ -1,5 +1,5 @@
 # cycle.py
-from Typer_v2.frequency import FREQ
+from Typer_v3.frequency import FREQ
 
 class CycleState:
     def __init__(self):

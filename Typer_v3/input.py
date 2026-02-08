@@ -2,9 +2,9 @@
 import keyboard
 import threading
 
-from Typer_v2.mapping import WORD_MAP, normalize
-from Typer_v2.cycle import CycleState
-from Typer_v2.frequency import FREQ
+from Typer_v3.mapping import WORD_MAP, normalize
+from Typer_v3.cycle import CycleState
+from Typer_v3.frequency import FREQ
 
 # ================= CONFIG =================
 
