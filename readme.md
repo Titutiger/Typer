@@ -2,6 +2,8 @@
 
 Typer_v2 is a lightweight, real-time **stenography-style typing engine** for Python that expands short, unordered letter chords into full words — and **learns from your usage over time**.
 
+> Typer_v3 is in development, don't run it, you will be disappointed like me.
+
 Think:  
 `clo → cool`  
 `aet → eat / tea / ate` (cycle with →)  
