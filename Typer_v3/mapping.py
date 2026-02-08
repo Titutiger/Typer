@@ -1,9 +1,11 @@
 # mapping.py
+from wordfreq import top_n_list
 from pathlib import Path
 from Typer_v3.frequency import FREQ
 
 DROP_VOWELS = False
 VOWELS = set("a") # aeiou
+MAX_WORDFREQ_CANDIDATES = 5000
 
 def normalize(text: str) -> str:
     text = text.lower()
@@ -12,9 +14,27 @@ def normalize(text: str) -> str:
 
 def add_word(word: str):
     sig = normalize(word)
+    if sig not in WORD_MAP:
+        WORD_MAP[sig] = []
     if word not in WORD_MAP[sig]:
         WORD_MAP[sig].append(word)
-        WORD_MAP[sig].sort(key=lambda w: FREQ.get(w), reverse=True)
+    WORD_MAP[sig].sort(key=lambda w: FREQ.get(w), reverse=True)
+
+def try_load_from_json(sig: str) -> list[str]:
+    """Load words with this signature from words_dictionary.json if not in WORD_MAP"""
+    if sig in WORD_MAP:
+        return WORD_MAP[sig]
+
+    loaded_words = []
+    for word in FREQ.data.keys():
+        if normalize(word) == sig:
+            loaded_words.append(word)
+
+    if loaded_words:
+        loaded_words.sort(key=lambda w: FREQ.get(w), reverse=True)
+        WORD_MAP[sig] = loaded_words
+
+    return loaded_words
 
 def load_wordlist():
     # project_root/data/words.txt
@@ -49,6 +69,20 @@ def build_mapping(words):
 
     return mapping
 
+
+def wordfreq_candidates(sig: str, exclude: set[str]) -> list[str]:
+    results = []
+
+    for word in top_n_list('en', MAX_WORDFREQ_CANDIDATES):
+        if word in exclude:
+            continue
+        if normalize(word) == sig:
+            # seed freq lazily
+            FREQ.get(word)
+            results.append(word)
+
+    results.sort(key=lambda w: FREQ.get(w), reverse=True)
+    return results
 
 # Load once (important for performance)
 WORDS = load_wordlist()

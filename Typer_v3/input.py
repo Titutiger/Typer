@@ -2,7 +2,7 @@
 import keyboard
 import threading
 
-from Typer_v3.mapping import WORD_MAP, normalize, add_word
+from Typer_v3.mapping import WORD_MAP, normalize, add_word, wordfreq_candidates
 from Typer_v3.cycle import CycleState
 from Typer_v3.frequency import FREQ
 
@@ -83,6 +83,11 @@ def try_expand():
     sig = normalize(typed_buffer)
     matches = WORD_MAP.get(sig)
 
+    # Try loading from JSON if not in WORD_MAP
+    if not matches:
+        from Typer_v3.mapping import try_load_from_json
+        matches = try_load_from_json(sig)
+
     if not matches:
         return
 
@@ -128,6 +133,15 @@ def on_key(event):
 
     key = event.name
 
+    # -------- Manual Add --------
+    if key == ':' and not steno_active:
+        steno_active = True
+        typed_buffer = ":"
+        steno_span_length = 1
+        cycle.clear()
+        cancel_timer()
+        return
+
     # -------- Trigger --------
     if key == STENO_TRIGGER:
         steno_active = True
@@ -146,30 +160,49 @@ def on_key(event):
 
     # -------- Cycle --------
     if key in ("right", "right arrow"):
-        if cycle.active:
-            next_word = cycle.next()
-            if next_word:
-                replace_word(next_word)
+        #if cycle.active:
+        #    next_word = cycle.next()
+        #    if next_word:
+        #        replace_word(next_word)
+        #return
+        if not cycle.active:
+            return
+        next_word = cycle.next()
+
+        if next_word is None:
+            sig = normalize(typed_buffer)
+            existing = set(cycle.words)
+
+            new_words = wordfreq_candidates(sig, existing)
+
+            if new_words:
+                WORD_MAP[sig].extend(new_words)
+                cycle.extend(new_words)
+                next_word = cycle.next()
+
+        if next_word:
+            replace_word(next_word)
+
         return
 
     # -------- Commit --------
     if key in ("space", "enter"):
+        if typed_buffer.startswith(":"):
+            # Manual add flow
+            word_to_add = typed_buffer[1:].strip()
+            if word_to_add:
+                FREQ.inc(word_to_add)  # Increment FIRST
+                add_word(word_to_add)  # Then add to mapping
+                delete_span()
+                keyboard.write(word_to_add)
+            reset_state()
+            return
+
+        # Normal steno commit
         if expanded_word:
             FREQ.inc(expanded_word)
-            from Typer_v2.mapping import add_word
             add_word(expanded_word)
         reset_state()
-        return
-
-    # -------- Edit --------
-    if key == "backspace":
-        if steno_span_length > 0:
-            steno_span_length -= 1
-        if typed_buffer:
-            typed_buffer = typed_buffer[:-1]
-        expanded_word = ""
-        cancel_timer()
-        cycle.clear()
         return
 
     # -------- Alphabetic --------
