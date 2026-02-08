@@ -34,6 +34,16 @@ No massive hotkey maps. No hardcoded shortcuts. Just logic + learning.
 
 ---
 
+## Architecture
+
+```commandline
+1. user learning (highest priority)
+2. local cache (JSON)
+3. word corpus (wordfreq, offline)
+```
+
+---
+
 ## 🧩 How It Works
 
 1. Press the **steno trigger** (`;`)
